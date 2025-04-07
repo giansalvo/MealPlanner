@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Meal Planner</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#FFD700", // giallo
+                            dark: "#0f0f0f", // nero profondo
+                            card: "#1a1a1a",
+                            accent: "#FACC15",
+                        },
+                    },
+                },
+            };
+        </script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+            <link href="./styles.css" rel="stylesheet" />
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    </head>
+    <body class="bg-dark text-white font-sans min-h-screen">
+        <div class="max-w-3xl mx-auto p-4">
+            <!-- Intestazione -->
+            <header class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-primary mb-2">
+                    Meal Planner
+                </h1>
+                <p class="text-gray-400">
+                    Pianifica i tuoi pasti in modo intelligente
+                </p>
+            </header>
+
+            <!-- Autenticazione -->
+            <section
+                id="authSection"
+                class="bg-card p-4 rounded-xl shadow-md mb-6"
+            >
+                <h2 class="text-xl font-semibold mb-4 text-primary">
+                    Accedi o Registrati
+                </h2>
+                <input
+                    id="email"
+                    placeholder="Email"
+                    type="email"
+                    class="bg-dark border border-primary rounded px-4 py-2 w-full mb-2"
+                />
+                <input
+                    id="password"
+                    placeholder="Password"
+                    type="password"
+                    class="bg-dark border border-primary rounded px-4 py-2 w-full mb-2"
+                />
+                <div class="flex gap-4">
+                    <button
+                        id="signupBtn"
+                        class="bg-primary text-dark font-semibold py-2 px-4 rounded hover:bg-accent transition"
+                    >
+                        Registrati
+                    </button>
+                    <button
+                        id="signinBtn"
+                        class="bg-primary text-dark font-semibold py-2 px-4 rounded hover:bg-accent transition"
+                    >
+                        Accedi
+                    </button>
+                </div>
+            </section>
+
+            <!-- App Section -->
+            <section id="appSection" class="hidden space-y-6">
+                <!-- Sezione App, visibile dopo login -->
+                <!-- Bottone Logout -->
+                <button
+                    id="logoutBtn"
+                    class="bg-red-600 text-white font-semibold py-2 px-4 rounded hover:bg-red-700 transition"
+                >
+                    Logout
+                </button>
+
+                <!-- Crea Ricetta -->
+                <section class="bg-card p-4 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-primary">
+                        Crea una Ricetta
+                    </h2>
+                    <form id="createRecipeForm" class="space-y-2">
+                        <input
+                            id="recipeName"
+                            placeholder="Nome ricetta"
+                            class="input-field"
+                            required
+                        />
+                        <textarea
+                            id="recipeDescription"
+                            placeholder="Descrizione"
+                            class="input-field"
+                        ></textarea>
+                        <input
+                            id="recipeIngredients"
+                            placeholder="Ingredienti (separati da virgola)"
+                            class="input-field"
+                            required
+                        />
+                        <div class="grid grid-cols-3 gap-2">
+                            <input
+                                id="protein"
+                                type="number"
+                                step="any"
+                                placeholder="Proteine (g)"
+                                class="input-field"
+                                required
+                            />
+                            <input
+                                id="carbs"
+                                type="number"
+                                step="any"
+                                placeholder="Carboidrati (g)"
+                                class="input-field"
+                                required
+                            />
+                            <input
+                                id="fats"
+                                type="number"
+                                step="any"
+                                placeholder="Grassi (g)"
+                                class="input-field"
+                                required
+                            />
+                        </div>
+                        <button
+                            type="button"
+                            id="saveRecipeBtn"
+                            class="btn-primary w-full"
+                        >
+                            Salva Ricetta
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Pianificazione Settimanale -->
+                <section class="bg-card p-4 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-primary">
+                        Pianificazione Settimanale
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                        <select id="planDay" class="input-field appearance-none bg-gray-600 text-black border border-primary rounded px-4 py-2 w-full">
+                            <option value="Lunedì">Lunedì</option>
+                            <option value="Martedì">Martedì</option>
+                            <option value="Mercoledì">Mercoledì</option>
+                            <option value="Giovedì">Giovedì</option>
+                            <option value="Venerdì">Venerdì</option>
+                            <option value="Sabato">Sabato</option>
+                            <option value="Domenica">Domenica</option>
+                        </select>
+                        <select id="mealTime" class="input-field appearance-none bg-gray-600 text-black border border-primary rounded px-4 py-2 w-full">
+                            <option value="Colazione">Colazione</option>
+                            <option value="Pranzo">Pranzo</option>
+                            <option value="Cena">Cena</option>
+                        </select>
+                        <select id="planRecipeSelect" class="input-field appearance-none bg-gray-600 text-black border border-primary rounded px-4 py-2 w-full">
+                        <option value="">Seleziona una ricetta</option>
+                        </select>
+                    </div>
+                    <button
+                        type="button"
+                        id="addPlanBtn"
+                        class="btn-primary w-full mt-2"
+                    >
+                        Aggiungi al Piano
+                    </button>
+                    <div
+                        id="planResults"
+                        class="text-sm text-gray-300 mt-4"
+                    ></div>
+                </section>
+
+                <!-- Macro Totali -->
+                <section class="bg-card p-4 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-primary">
+                        Macro Totali
+                    </h2>
+                    <button id="calcMacrosBtn" class="btn-primary w-full">
+                        Calcola Macro
+                    </button>
+                    <div
+                        id="macroResults"
+                        class="text-sm text-gray-300 mt-4"
+                    ></div>
+                </section>
+
+                <!-- Lista della Spesa -->
+                <section class="bg-card p-4 rounded-xl shadow-md">
+                    <h2 class="text-xl font-semibold mb-4 text-primary">
+                        Lista della Spesa
+                    </h2>
+                    <button id="generateShoppingBtn" class="btn-primary w-full">
+                        Genera Lista
+                    </button>
+                    <div
+                        id="shoppingList"
+                        class="text-sm text-gray-300 mt-4 whitespace-pre-wrap"
+                    ></div>
+                    <button id="exportPDF" class="btn-primary mt-2">
+                        Esporta PDF
+                    </button>
+                    <br />
+                    <button id="whatsappExportShoppingListBtn">
+                        Esporta Lista della Spesa su WhatsApp
+                    </button>
+                </section>
+            </div>
+        </div>
+
+        <style>
+            .input-field {
+                @apply bg-dark border border-primary rounded px-4 py-2 w-full;
+            }
+            .btn-primary {
+                @apply bg-primary text-dark font-semibold py-2 px-4 rounded hover:bg-accent transition;
+            }
+        </style>
+        <script type="module" src="./scripts.js"></script>
+    </body>
+</html>
